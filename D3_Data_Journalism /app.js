@@ -36,7 +36,7 @@ var chartGroup = svg.append("g")
 // Import Data
 d3.csv("data.csv").then(function(data) {
 
-    // Step 1: Parse Data/Cast as numbers
+    // Parse Data/Cast as numbers
     // ==============================
     data.forEach(function(data) {
       data.healthcare = +data.healthcare;
@@ -47,8 +47,11 @@ d3.csv("data.csv").then(function(data) {
       data.income - +data.income; 
     });
 
-    // Step 2: Create scale functions
+    // Create scale functions
     // ==============================
+    //xLinear Scale function above csv import 
+    var xLinearScale = xScale(data, chosenXaxis);
+    // ^ To look into 
     var xLinearScale = d3.scaleLinear()
       .domain([20, d3.max(data, d => d.poverty)])
       .range([0, width]);
@@ -57,68 +60,51 @@ d3.csv("data.csv").then(function(data) {
       .domain([0, d3.max(data, d => d.healthcare)])
       .range([height, 0]);
 
-    // Step 3: Create axis functions
+    // Create axis functions
     // ==============================
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
 
-    // Step 4: Append Axes to the chart
+    // Append Axes to the chart
     // ==============================
     chartGroup.append("g")
       .attr("transform", `translate(0, ${height})`)
       .call(bottomAxis);
+      .classed("x-axis", true);
+      
 
     chartGroup.append("g")
       .call(leftAxis);
+      .classed("y-axis", true);
 
-    // Step 5: Create Circles
+
+    // Create Circles
     // ==============================
     var circlesGroup = chartGroup.selectAll("circle")
-    .data(hairData)
+    .data(data)
     .enter()
     .append("circle")
-    .attr("cx", d => xLinearScale(d.hair_length))
-    .attr("cy", d => yLinearScale(d.num_hits))
+    .attr("cx", d => xLinearScale(d.poverty))
+    .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", "15")
-    .attr("fill", "pink")
+    .attr("class", "stateCircle")
+    .attr("fill", "purple")
     .attr("opacity", ".5");
 
-    // Step 6: Initialize tool tip
-    // ==============================
-    var toolTip = d3.tip()
-      .attr("class", "tooltip")
-      .offset([80, -60])
-      .html(function(d) {
-        return (`${d.rockband}<br>Hair length: ${d.hair_length}<br>Hits: ${d.num_hits}`);
-      });
-
-    // Step 7: Create tooltip in the chart
-    // ==============================
-    chartGroup.call(toolTip);
-
-    // Step 8: Create event listeners to display and hide the tooltip
-    // ==============================
-    circlesGroup.on("click", function(data) {
-      toolTip.show(data, this);
-    })
-      // onmouseout event
-      .on("mouseout", function(data, index) {
-        toolTip.hide(data);
-      });
-
     // Create axes labels
+    //X axis
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 0 - margin.left + 40)
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .attr("class", "axisText")
-      .text("Number of Billboard 100 Hits");
+      .text("Poverty");
 
     chartGroup.append("text")
       .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
       .attr("class", "axisText")
-      .text("Hair Metal Band Hair Length (inches)");
+      .text("Healthcare)");
   }).catch(function(error) {
     console.log(error);
   });
