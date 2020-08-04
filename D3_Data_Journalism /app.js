@@ -32,9 +32,6 @@ var svg = d3.select("#scatter")
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-//Axises 
-var BottomAxis = "Poverty"
-var LeftAxis = "Lacks Health Care"
 
 // Import Data
 d3.csv("data.csv").then(function(data) {
@@ -42,18 +39,22 @@ d3.csv("data.csv").then(function(data) {
     // Step 1: Parse Data/Cast as numbers
     // ==============================
     data.forEach(function(data) {
-      data.hair_length = +data.healthcarelow;
-      data.num_hits = +data.poverty;
+      data.healthcare = +data.healthcare;
+      data.poverty = +data.poverty;
+      data.obesity = +data.obesity;
+      data.smokes = +data.smokes;
+      data.age = +data.age; 
+      data.income - +data.income; 
     });
 
     // Step 2: Create scale functions
     // ==============================
     var xLinearScale = d3.scaleLinear()
-      .domain([20, d3.max(hairData, d => d.healthcarelow)])
+      .domain([20, d3.max(data, d => d.poverty)])
       .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-      .domain([0, d3.max(hairData, d => d.num_hits)])
+      .domain([0, d3.max(data, d => d.healthcare)])
       .range([height, 0]);
 
     // Step 3: Create axis functions
