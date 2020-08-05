@@ -67,18 +67,15 @@ d3.csv("data.csv").then(function(data) {
 
     // Append Axes to the chart
     // ==============================
+    var xAxis = chartGroup.append("g")
+    .classed("x-axis", true)
+    .attr("transform", `translate(0, ${height})`)
+    .call(bottomAxis);
+    
     chartGroup.append("g")
-      .attr("transform", `translate(0, ${height})`)
-      .call(bottomAxis);
-      .classed("x-axis", true);
-      
+    .call(leftAxis);
 
-    chartGroup.append("g")
-      .call(leftAxis);
-      .classed("y-axis", true);
-
-
-    // Create Circles
+    // Create and Append Initial Circles
     // ==============================
     var circlesGroup = chartGroup.selectAll("circle")
     .data(data)
