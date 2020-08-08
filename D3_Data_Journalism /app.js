@@ -41,19 +41,13 @@ d3.csv("data.csv").then(function(data) {
     data.forEach(function(data) {
       data.healthcare = +data.healthcare;
       data.poverty = +data.poverty;
-      data.obesity = +data.obesity;
-      data.smokes = +data.smokes;
-      data.age = +data.age; 
-      data.income - +data.income; 
     });
 
     // Create scale functions
     // ==============================
     //xLinear Scale function above csv import 
-    var xLinearScale = xScale(data, chosenXaxis);
-    // ^ To look into 
     var xLinearScale = d3.scaleLinear()
-      .domain([20, d3.max(data, d => d.poverty)])
+      .domain([10, d3.max(data, d => d.poverty)])
       .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
@@ -67,7 +61,7 @@ d3.csv("data.csv").then(function(data) {
 
     // Append Axes to the chart
     // ==============================
-    var xAxis = chartGroup.append("g")
+    chartGroup.append("g")
     .classed("x-axis", true)
     .attr("transform", `translate(0, ${height})`)
     .call(bottomAxis);
@@ -83,10 +77,24 @@ d3.csv("data.csv").then(function(data) {
     .append("circle")
     .attr("cx", d => xLinearScale(d.poverty))
     .attr("cy", d => yLinearScale(d.healthcare))
-    .attr("r", "15")
-    .attr("class", "stateCircle")
+    .attr("r", "10")
     .attr("fill", "purple")
     .attr("opacity", ".5");
+
+//text in circles 
+var text = chartGroup.append("g").selectAll("text")
+.data(data)
+.enter()
+.append("text")
+.attr("x", d => xLinearScale(d.poverty))
+.attr("y", d => yLinearScale(d.healthcare))
+.attr("dy", ".35em")
+.text(d => d.abbr)
+.attr("text-anchor", "middle")
+.attr("font-family", "sans-serif")
+.attr("font-size", "10px")
+.attr("fill", "white")
+.attr("font-weight", "700");
 
     // Create axes labels
     //X axis
